@@ -14,7 +14,7 @@ export const useAuthStore = defineStore('auth', {
         this.loading = true;
         try{
             const res = await loginApi({email,password})
-            localStorage.setItem('token', res.data.token)
+            localStorage.setItem('token', res.data.data.token)
 
             this.isAuthenticated = true
             await this.fetchUser()
@@ -25,7 +25,7 @@ export const useAuthStore = defineStore('auth', {
         async fetchUser(){
             const res = await meApi()
 
-            this.user = res.data
+            this.user = res.data.data
         },
 
         async logout(){

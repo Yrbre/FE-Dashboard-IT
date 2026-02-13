@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { Button, InputText } from 'primevue';
+import router from '@/router';
+import { useAuthStore } from '@/stores/auth.store';
+import { Button, InputText, Message } from 'primevue';
 import { ref } from 'vue';
 
-const
+const auth = useAuthStore();
 const error = ref<string|null>(null);
 const form = ref({
     email:'',
@@ -18,9 +20,10 @@ if(!form.value.email || !form.value.password){
 }
 
 try {
-await auth
-}catch{
-
+await auth.login(form.value.email, form.value.password);
+router.push({name:'dashboard'});
+}catch(e) {
+    error.value = "Invalid email or password"
 }
 
 
@@ -39,7 +42,12 @@ await auth
                     <h1 class="text-2xl font-bold text-surface-900 mb-2">Welcome</h1>
                     <p class="text-surface-500">Please sign in to your account</p>
                  </div>
-                 <form action="" class="flex flex-col gap-5">
+                 <form @submit.prevent="login" class="flex flex-col gap-5">
+                    <Message 
+                    v-if="error"
+                    severity="error"
+                    :closable="false">{{ error }}</Message>
+
                     <!-- email -->
                     <div class="flex flex-col gap-2">
                         <label for="email" class="font-medium text-surface-900">Email <span class="text-red-600">*</span></label>
@@ -52,12 +60,14 @@ await auth
                         <InputText id="password" v-model="form.password" type="password" placeholder="********"
                         fluid class="bg-surface-10 focus:bg-white"></InputText>
                     </div>
+                    
                     <Button
                     type="submit"
                     label="Sign In"
                     fluid
                     class="mt-2" />
             </form>
+            
             </div>
             
         </div>
